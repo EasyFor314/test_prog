@@ -1,7 +1,9 @@
 #include <windows.h>
+#include <string>
 
-HWND hwndEdit;
-
+HWND hwndEdit_text;
+HWND hwndEdit_col;
+HWND hwndShow_str;
 /* This is where all the input to the window goes to */
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	switch(Message) {
@@ -13,15 +15,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		}
 		case WM_COMMAND:	
 
-            if (HIWORD(wParam) == BN_CLICKED) {
+            if (HIWORD(wParam) == BN_CLICKED) 
+			{
 			
-			 int len = GetWindowTextLength(hwndEdit) + 1;
-                char* text = new char[len];
-
-                GetWindowText(hwndEdit, text, len);
-               
-                
-			MessageBox(NULL, text , "Hello", MB_OK);
+				int len = GetWindowTextLength(hwndEdit_text) + 1;
+	            char* text = new char[len];
+	            GetWindowText(hwndEdit_text, text, len);  
+				 
+				int len_col = GetWindowTextLength(hwndEdit_col) + 1;
+	            char* col = new char[len_col];
+				GetWindowText(hwndEdit_col, col, len_col);
+				
+				int col_r = atoi( col );
+			
+				for( int i = 0 ; i < (col_r)  ; i++ )
+				{
+				//MessageBox(NULL, text , col, MB_OK)	;
+				HWND rr = 	CreateWindowW(L"Static", L"", 
+                WS_CHILD | WS_VISIBLE,
+                200, 
+				20*i, 
+				90, 
+				25, 
+				hwnd, 
+				NULL, 
+				NULL, 
+				NULL); 
+				SetWindowText( rr, text );
+					
+				}
+								               			    
 		
             }
 
@@ -77,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}	
 		
-hwndEdit = CreateWindowW(L"Edit", NULL, 
+hwndEdit_text = CreateWindowW(L"Edit", NULL, 
                 WS_CHILD | WS_VISIBLE | WS_BORDER,
                 50, 
 				50, 
@@ -87,19 +110,30 @@ hwndEdit = CreateWindowW(L"Edit", NULL,
 				NULL,
 				NULL,
 				NULL);
-				             
+				
+hwndEdit_col = CreateWindowW(L"Edit", NULL, 
+                WS_CHILD | WS_VISIBLE | WS_BORDER,
+                50, 
+				100, 
+				150, 
+				20, 
+				hwnd, 
+				NULL,
+				NULL,
+				NULL);	
+							             
 CreateWindowW(  L"Button", 
-                L"ShowMsgBox",
+                L"Ok",
                 WS_VISIBLE | WS_CHILD ,
                 20, 
-				100, 
+				150, 
 				100, 
 				25, 
 				hwnd, 
 				NULL,
 				NULL,
 				NULL);  
-CreateWindowW(L"Static", L"Name:", 
+CreateWindowW(L"Static", L"Stroka:", 
                 WS_CHILD | WS_VISIBLE,
                 50, 
 				20, 
@@ -109,7 +143,17 @@ CreateWindowW(L"Static", L"Name:",
 				NULL, 
 				NULL, 
 				NULL); 
-                
+CreateWindowW(L"Static", L"Col-vo:", 
+                WS_CHILD | WS_VISIBLE,
+                50, 
+				70, 
+				90, 
+				25, 
+				hwnd, 
+				NULL, 
+				NULL, 
+				NULL);
+             
 	/*
 		This is the heart of our program where all input is processed and 
 		sent to WndProc. Note that GetMessage blocks code flow until it receives something, so
